@@ -4,3 +4,10 @@
   padding: 0;
   margin: 0;
 }
+
+:root {
+  --primary-color: rgb(53, 116, 211);
+  --secundary-color: rgb(211 212 212);
+  --primary-text-color: rgb(33, 33, 34);
+  --secundary-text-color: #34495e;
+}
