@@ -1,4 +1,6 @@
 .dashboard {
+  margin: auto;
+  max-width: 80%;
   display: grid;
   gap: 18px;
   padding: 24px;

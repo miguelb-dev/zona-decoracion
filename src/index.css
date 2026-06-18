@@ -22,7 +22,7 @@ body {
 #root {
   min-height: 100vh; /* Mantiene abajo del todo el footer */
   display: grid;
-  grid-template-columns: 1a 1fr 1fr;
+  grid-template-columns: auto 1fr 1fr;
   grid-template-rows: auto 1fr auto;
   gap: 0px 0px;
   grid-auto-flow: row;
