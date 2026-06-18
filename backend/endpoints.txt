@@ -1,0 +1,53 @@
+# Dashboard
+URL (Endpoint): `[http://127.0.0.1:8000/api/dashboard/datos?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD](http://127.0.0.1:8000/api/dashboard/datos?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD)`
+
+Método HTTP: GET
+JSON (Respuesta al Frontend):
+
+json
+{
+  "status": "success",
+  "data": [
+    {
+      "produceLisa": 120,
+      "envasesDecorados": 83,
+      "envasesDefectuosos": 18,
+      "date": "2026-02-03"
+    }
+  ]
+}
+
+#pintura
+
+Ruta 1: Registrar Pintura
+URL (Endpoint): `[http://127.0.0.1:8000/api/pintura/registrar](http://127.0.0.1:8000/api/pintura/registrar)`
+Método HTTP: POST
+
+JSON (Envía el Frontend):
+{
+  "campo_ejemplo": "valor"
+}
+
+JSON (Respuesta al Frontend):
+{
+  "mensaje": "Control registrado con éxito",
+  "id_insertado": 1
+}
+
+Ruta 2: Listar Pinturas
+URL (Endpoint): `[http://127.0.0.1:8000/api/pintura/listar](http://127.0.0.1:8000/api/pintura/listar)`
+Método HTTP: GET
+
+JSON (Respuesta al Frontend):
+{
+  "registros": [
+    {
+      "id": 1,
+      "campo_ejemplo": "valor"
+    }
+  ]
+}
+
+
+
+
