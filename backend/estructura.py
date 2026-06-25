@@ -54,7 +54,7 @@ Las operaciones básicas de base de datos que se repiten en todos los módulos (
 
 
 NOTA: 
-la base de datos tendra tablas independientes para lo insumos especiales y otra para insumos genericos, estas no se relacionaran en la base de datos sino, cuando el módulo de insumos necesita mostrarlos juntos (dashboard, alertas), la unión se hace en la consulta (codigo), no en la base de datos. El servicio obtiene los genéricos, obtiene las pinturas (mapeando campo color como nombre y cantidad_recibida como cantidad) y fusiona ambas listas. Es simple y evita meter acoplamiento innecesario entre tablas que no tienen una relación real de integridad referencial. 
+la base de datos tendra tablas independientes para lo insumos especiales y otra para insumos genericos, estas no se relacionaran en la base de datos sino, cuando el módulo de insumos necesita mostrarlos juntos (dashboard, alertas), la unión se hace en la consulta (codigo), no en la base de datos. El servicio obtiene los genéricos, obtiene las pinturas (mapeando campo color como nombre y cantidad_consumida como cantidad) y fusiona ambas listas. Es simple y evita meter acoplamiento innecesario entre tablas que no tienen una relación real de integridad referencial. 
 
 NOTA:
 No se utilizara programacion asincrona en este proyecto, ya que no se requiere manejar múltiples tareas concurrentes ni operaciones de I/O intensivas que puedan beneficiarse de la asincronía. La estructura del proyecto se mantendrá simple y sin la complejidad adicional que conlleva la programación asíncrona, lo que facilitará el desarrollo y mantenimiento del código.

@@ -30,6 +30,20 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # ---------------------------------------------------------
+# 6. FUNCIÓN DE DEPENDENCIA PARA FastAPI
+# ---------------------------------------------------------
+def get_db():
+    """
+    Función que se usará como dependencia en los endpoints de FastAPI.
+    Proporciona una sesión de base de datos y la cierra automáticamente al finalizar.
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# ---------------------------------------------------------
 # CÓDIGO DE PRUEBA LOCAL (Solo se ejecuta si le das a "Play" a este archivo)
 # ---------------------------------------------------------
 if __name__ == "__main__":
@@ -39,5 +53,3 @@ if __name__ == "__main__":
             print("¡Éxito total! Conexión a la base de datos establecida con SQLAlchemy.")
     except Exception as e:
         print(f"Uy, hubo un error al conectar: {e}")
-
-#Ejecuta el archivo nuevamente. Asegúrate de tener tu entorno virtual activo (venv), tu base de datos encendida, y corre el archivo desde la terminal con el comando: python backend/database/conexion.py

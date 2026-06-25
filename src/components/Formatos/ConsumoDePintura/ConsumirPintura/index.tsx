@@ -1,35 +1,36 @@
 import React, { useState } from "react";
-import styles from "./consumoDePintura.module.css";
-import headerLogo from "../../../assets/images/logo-segun-controles.png";
+import styles from "./consumir-pintura.module.css";
+import headerLogo from "../../../../assets/images/logo-segun-controles.png";
 
-type consumoDePinturaProps = {
+type consumirPinturaProps = {
   fechaInicio: string;
   proveedor: string;
-  color: string;
+  idPinturaInventario: string;
   numeroDeLote: string;
-  cantidadRecibida: string;
+  cantidadConsumida: string;
   unidadDeMedida: string;
   fechaDeFinalizacion: string;
   revisadoPor: string;
   observaciones: string;
 };
 
-export const ConsumoDePintura: React.FC = () => {
-  const [formData, setFormData] = useState<consumoDePinturaProps>({
+export const ConsumirPintura: React.FC = () => {
+  const [formData, setFormData] = useState<consumirPinturaProps>({
     fechaInicio: "",
     proveedor: "",
-    color: "",
+    idPinturaInventario: "",
     numeroDeLote: "",
-    cantidadRecibida: "",
-    unidadDeMedida: "",
+    cantidadConsumida: "",
+    unidadDeMedida: "Litros" /* Por ahora, siempre se trabajará con Litros */,
     fechaDeFinalizacion: "",
     revisadoPor: "",
     observaciones: "",
   });
 
   const [enviado, setEnviado] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ? Investigar el propósito de esta función, creo que tiene que ver con el cambio del valor de los input
+  // Almacenar los datos de los campos
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -42,27 +43,71 @@ export const ConsumoDePintura: React.FC = () => {
     }));
   };
 
-  // Validar el formulario
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Datos enviados:", formData);
-    setEnviado(true);
-    setTimeout(() => setEnviado(false), 3000);
-  };
-
   // Resetear los campos
   const handleReset = () => {
     setFormData({
       fechaInicio: "",
       proveedor: "",
-      color: "",
+      idPinturaInventario: "",
       numeroDeLote: "",
-      cantidadRecibida: "",
-      unidadDeMedida: "",
+      cantidadConsumida: "",
+      unidadDeMedida: "Litros",
       fechaDeFinalizacion: "",
       revisadoPor: "",
       observaciones: "",
     });
+  };
+
+  // Enviar el Formulario
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isSubmitting) return; //* Previene que el usuario haga doble click
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/pintura/consumo",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.mensaje ||
+            `Error ${response.status}: ${response.statusText}`,
+        );
+      }
+
+      const data = await response.json();
+
+      console.log("Respuesta del servidor:", data);
+
+      // Mostrar mensaje de éxito
+      setEnviado(true);
+      setInterval(() => {
+        setEnviado(false);
+      }, 3000);
+
+      // Resetear formulario después del envío exitoso
+      setTimeout(() => {
+        handleReset();
+      }, 3000);
+
+      /*  */
+    } catch (err) {
+      console.error("Error en el envío:", err);
+
+      /*  */
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -74,7 +119,7 @@ export const ConsumoDePintura: React.FC = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <header className={styles.headerForm}>
           <div className={styles.logoWrapper}>
             <img
@@ -124,18 +169,24 @@ export const ConsumoDePintura: React.FC = () => {
           </div>
 
           <div className={styles.inputWrapper}>
-            <label htmlFor="color" className={styles.label}>
+            <label htmlFor="idPinturaInventario" className={styles.label}>
               Color <span className={styles.requireSymbol}>*</span>
             </label>
-            <input
-              className={styles.input}
-              type="text"
-              id="color"
-              name="color"
-              value={formData.color}
+            <select
+              className={styles.select}
+              id="idPinturaInventario"
+              name="idPinturaInventario"
+              value={formData.idPinturaInventario}
               onChange={handleChange}
               required
-            />
+            >
+              <option value="">Selecciona un color</option>
+              <option value="1">Blanco</option>
+              <option value="2">Azul</option>
+              <option value="3">Rojo</option>
+              <option value="4">Amarillo</option>
+              <option value="5">Verde</option>
+            </select>
           </div>
 
           <div className={styles.inputWrapper}>
@@ -144,7 +195,7 @@ export const ConsumoDePintura: React.FC = () => {
             </label>
             <input
               className={styles.input}
-              type="number"
+              type="text"
               id="numeroDeLote"
               name="numeroDeLote"
               value={formData.numeroDeLote}
@@ -154,15 +205,15 @@ export const ConsumoDePintura: React.FC = () => {
           </div>
 
           <div className={styles.inputWrapper}>
-            <label htmlFor="cantidadRecibida" className={styles.label}>
+            <label htmlFor="cantidadConsumida" className={styles.label}>
               Cantidad Recibida <span className={styles.requireSymbol}>*</span>
             </label>
             <input
               className={styles.input}
               type="text"
-              id="cantidadRecibida"
-              name="cantidadRecibida"
-              value={formData.cantidadRecibida}
+              id="cantidadConsumida"
+              name="cantidadConsumida"
+              value={formData.cantidadConsumida}
               onChange={handleChange}
               required
             />
@@ -173,12 +224,13 @@ export const ConsumoDePintura: React.FC = () => {
               Unidad de Medida <span className={styles.requireSymbol}>*</span>
             </label>
             <input
-              className={styles.select}
+              className={styles.input}
               id="unidadDeMedida"
               name="unidadDeMedida"
               value={formData.unidadDeMedida}
               onChange={handleChange}
               required
+              readOnly
             />
           </div>
 

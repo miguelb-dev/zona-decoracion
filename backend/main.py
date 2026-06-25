@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Importamos el router desde tu módulo de pintura
-from backend.modules.pintura.router import router as pintura_router
+from backend.modules.insumos.pintura.router import router as pintura_router
 
 # Importamos el nuevo router desde tu módulo de dashboard
 from backend.modules.dashboard.router import router as dashboard_router

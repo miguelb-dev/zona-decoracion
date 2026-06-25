@@ -1,53 +1,60 @@
-# Dashboard
-URL (Endpoint): `[http://127.0.0.1:8000/api/dashboard/datos?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD](http://127.0.0.1:8000/api/dashboard/datos?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD)`
+#nota: en el archivo index cambiar el nombre d ela variable "cantidadRecibida" a "cantidadConsumida"
+#nota: para los campos color y unidadDeMedida se debe de hacer un select (color:Blanco y Azul, unidadDeMedida:litros), para que asi estos dos campos queden guardados como un int, este int se guardará en idPinturaInventario
 
-Método HTTP: GET
+Ruta 1: Ingreso de Pintura (Registro)
+URL (Endpoint): `http://127.0.0.1:8000/api/pintura/registro`
+Método HTTP: POST
+
+JSON (Envía el Frontend):
+
+json
+{
+  "idPinturaInventario": int (1 o 2),
+  "proveedor": "String",
+  "fechaRegistro": "2026-06-24",
+  "cantidadRegistrada": 100.00,
+  "registradoPor": "String",
+  "observaciones": "String"
+}
+
+
 JSON (Respuesta al Frontend):
 
 json
 {
-  "status": "success",
-  "data": [
-    {
-      "produceLisa": 120,
-      "envasesDecorados": 83,
-      "envasesDefectuosos": 18,
-      "date": "2026-02-03"
-    }
-  ]
+  "mensaje": "Registro procesado con éxito",
+  "id": int (1 o 2)
 }
 
-#pintura
 
-Ruta 1: Registrar Pintura
-URL (Endpoint): `[http://127.0.0.1:8000/api/pintura/registrar](http://127.0.0.1:8000/api/pintura/registrar)`
+
+---
+
+Ruta 2: Formato de Consumo (Salida)
+URL (Endpoint): `http://127.0.0.1:8000/api/pintura/consumo`
 Método HTTP: POST
 
 JSON (Envía el Frontend):
+
+json
 {
-  "campo_ejemplo": "valor"
+  "idPinturaInventario": int (1 o 2),
+  "proveedor": "String",
+  "fechaInicio": "2026-06-24",
+  "numeroDeLote": "String",
+  "cantidadConsumida": 12.50,
+  "fechaDeFinalizacion": "2026-06-25",
+  "revisadoPor": "String",
+  "observaciones": "String"
 }
+
+
 
 JSON (Respuesta al Frontend):
+
+json
 {
-  "mensaje": "Control registrado con éxito",
-  "id_insertado": 1
+  "mensaje": "Consumo procesado con éxito",
+  "id": int (1 o 2)
 }
-
-Ruta 2: Listar Pinturas
-URL (Endpoint): `[http://127.0.0.1:8000/api/pintura/listar](http://127.0.0.1:8000/api/pintura/listar)`
-Método HTTP: GET
-
-JSON (Respuesta al Frontend):
-{
-  "registros": [
-    {
-      "id": 1,
-      "campo_ejemplo": "valor"
-    }
-  ]
-}
-
-
-
 
