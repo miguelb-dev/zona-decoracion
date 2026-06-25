@@ -6,17 +6,10 @@ export const Sidebar = () => {
     <nav className={styles.sidebar} id="sidebar">
       <ul>
         <li>
-          <Link to="/src/components/Formatos/ConsumoDePintura/ConsumirPintura">
-            Consumir Pintura
-          </Link>
+          <Link to="/">Dashboard</Link>
         </li>
         <li>
-          <Link to="/src/components/Formatos/ConsumoDePintura/SuministrarPintura">
-            Suministrar Pintura
-          </Link>
-        </li>
-        <li>
-          <Link to="/src/components/Dashboard">Métricas</Link>
+          <Link to="/consumo-pintura">Consumo de Pintura</Link>
         </li>
       </ul>
     </nav>
