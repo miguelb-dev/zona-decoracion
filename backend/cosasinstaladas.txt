@@ -1,5 +1,3 @@
-
-
 # ==================================================
 GUIA DE COMANDOS - PROYECTO ZONA DECORACION
 
@@ -9,7 +7,8 @@ Crear el entorno virtual (se hace una sola vez al iniciar el proyecto):
 python -m venv venv
 
 Activar el entorno virtual en Windows PowerShell:
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned ; .\venv\Scripts\Activate.ps1
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned ;
+.\venv\Scripts\Activate.ps1
 
 (Sabrás que funcionó porque aparecerá la palabra (venv) al inicio de la línea en tu terminal).
 
@@ -20,6 +19,8 @@ pip install sqlalchemy pymysql python-dotenv
 
 Instalar herramientas del Servidor API y validaciones de datos:
 pip install fastapi pydantic uvicorn
+
+* NOTA DE NOTIFICACIONES: El sistema de envío de correos utiliza 'smtplib' (nativo de Python) y 'BackgroundTasks' (nativo de FastAPI), por lo que NO requiere ninguna instalación extra vía pip.
 
 Exportar la lista de librerías instaladas a un archivo de texto (opcional para compartir):
 pip freeze > requirements.txt
@@ -51,4 +52,4 @@ npm run dev
 Terminal 1 (Backend): Activar entorno virtual -> uvicorn backend.main:app --reload
 Terminal 2 (Frontend): npm run dev
 
-
+npm install vite@5 @vitejs/plugin-react@4 --save-dev

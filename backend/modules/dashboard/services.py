@@ -15,8 +15,8 @@ def obtener_datos_dashboard(fromDate: str, toDate: str):
     # 1. Obtenemos los datos crudos de cada tabla usando nuestra función genérica.
     # Le pasamos la tabla y el nombre exacto de la columna de fecha que tiene en la BBDD.
     res_lisa = filtrar_registros_dashboard("produccion_lisa", "fecha_produccion_lisa", fromDate, toDate)
-    res_decorados = filtrar_registros_dashboard("envases_decorados", "fecha_decorado", fromDate, toDate)
-    res_defectuosos = filtrar_registros_dashboard("envases_defectuosos", "fecha_produccion", fromDate, toDate)
+    res_decorados = filtrar_registros_dashboard("envases_decorados", "fecha_decorada", fromDate, toDate)
+    res_defectuosos = filtrar_registros_dashboard("envases_defectuoso", "fecha_produccion", fromDate, toDate)
 
     # Si alguna de las consultas falló, retornamos el error al router inmediatamente
     if res_lisa["status"] == "error": return res_lisa
@@ -40,9 +40,9 @@ def obtener_datos_dashboard(fromDate: str, toDate: str):
 
     # Procesamos Envases Decorados
     for fila in res_decorados["data"]:
-        fecha_str = str(fila["fecha_decorado"])
-        # Ojo: Usamos "canditad_decorada" (con 't') porque así está en la tabla de la BBDD
-        agrupado[fecha_str]["envasesDecorados"] += fila["canditad_decorada"]
+        fecha_str = str(fila["fecha_decorada"])
+        # Ojo: Usamos "cantidad_decorada" (con 't') porque así está en la tabla de la BBDD
+        agrupado[fecha_str]["envasesDecorados"] += fila["cantidad_decorada"]
         agrupado[fecha_str]["date"] = fecha_str
 
     # Procesamos Envases Defectuosos

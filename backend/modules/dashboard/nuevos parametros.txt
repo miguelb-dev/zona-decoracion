@@ -2,7 +2,7 @@ tabla 1:
 envases_decorados
 id
 fecha_decorado
-canditad_decorada
+cantidad_decorada
 
 tabla 2:
 produccion_lisa

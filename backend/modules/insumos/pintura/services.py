@@ -1,9 +1,10 @@
 # backend/modules/pintura/services.py
 
 from sqlalchemy.orm import Session
+from fastapi import BackgroundTasks # <--- IMPORTANTE PARA LAS NOTIFICACIONES
 from .models import PinturaInventario, PinturaRegistro, PinturaConsumo
 from .schemas import RegistroCrear, ConsumoCrear
-
+from backend.utils.notificacion.notificaciones import enviar_correo_alerta # <--- IMPORTA TU UTILIDAD
 
 # =================================================================
 # LÓGICA DE REGISTROS (ENTRADAS DE INSUMO)
@@ -37,12 +38,12 @@ def registrar_registro_pintura(db: Session, datos: RegistroCrear):
 
 
 # =================================================================
-# LÓGICA DE CONSUMO (SALIDAS DE INSUMO)
+# LÓGICA DE CONSUMOS (SALIDAS DE INSUMO Y ALERTAS)
 # =================================================================
 
-def registrar_consumo_pintura(db: Session, datos: ConsumoCrear):
+def registrar_consumo_pintura(db: Session, datos: ConsumoCrear, background_tasks: BackgroundTasks):
     """
-    Registra una salida de pintura (consumo) y resta automáticamente del inventario.
+    Registra el consumo, resta del inventario y dispara alerta si llega al mínimo.
     """
     inventario = db.query(PinturaInventario).filter(PinturaInventario.id == datos.id_pintura_inventario).first()
     
@@ -51,19 +52,46 @@ def registrar_consumo_pintura(db: Session, datos: ConsumoCrear):
 
     # Validación de stock
     if inventario.cantidad_actual < datos.cantidad_consumida:
-        return {"status": "error", "message": "Stock insuficiente"}
+        return {
+            "status": "error", 
+            "message": f"Stock insuficiente. Disponible: {inventario.cantidad_actual}"
+        }
 
     try:
         # 1. Restamos del stock
         inventario.cantidad_actual -= datos.cantidad_consumida
 
-        # 2. Guardamos el formato de consumo
+        # 2. VALIDACIÓN PARA DISPARAR ALERTA (Notificación)
+        # Si el stock cae al límite o menos, enviamos correo
+        
+        if inventario.cantidad_actual == 0:
+            # Alerta crítica: Stock en cero
+            background_tasks.add_task(
+                enviar_correo_alerta, 
+                "migueljtu@gmail.com", 
+                f"ALERTA CRÍTICA: Pintura color - {inventario.color} AGOTADA", 
+                f"El insumo pintura de color {inventario.color} se ha agotado por completo (0 Litros en inventario). "
+                f"Es necesario realizar un reabastecimiento urgente de este material."
+            )
+        
+        
+        elif inventario.cantidad_actual <= inventario.cantidad_minima_alerta:
+            background_tasks.add_task(
+                enviar_correo_alerta, 
+                "migueljtu@gmail.com", 
+                f"ALERTA: Bajas cantidades de pintura color - {inventario.color} en el inventario,", 
+                f"Actualmente, cuarto de pantalla cuenta con {inventario.cantidad_actual} Litros de Pintura color  {inventario.color}, lo cual representa niveles bajo de este insumo. Se recomienda hacer una nueva solicitud del material y actualizar la cantidad antes de que se agote."
+            )
+
+
+        # 3. Guardamos el formato de consumo
         nuevo_consumo = PinturaConsumo(**datos.model_dump(by_alias=False))
         db.add(nuevo_consumo)
 
         db.commit()
         db.refresh(nuevo_consumo)
         return {"status": "success", "id": nuevo_consumo.id}
+    
     except Exception as e:
         db.rollback()
         return {"status": "error", "message": str(e)}

@@ -1,0 +1,123 @@
+
+Ruta 1: Ingreso de Pintura (Registro)
+URL (Endpoint): http://127.0.0.1:8000/api/pintura/registro
+Método HTTP: POST
+
+JSON (Envía el Frontend):
+
+json
+{
+  "idPinturaInventario": int (1 o 2),
+  "proveedor": "String",
+  "fechaRegistro": "2026-06-24",
+  "unidadDeMedida": "String",
+  "cantidadRegistrada": 100.00,
+  "registradoPor": "String",
+  "observaciones": "String"
+}
+
+
+JSON (Respuesta al Frontend en caso de exito ):
+
+{
+  "mensaje": "Registro ingresado con éxito",
+  "id": 
+}
+
+JSON (Respuesta al Frontend en caso de error ):
+{
+  "detail": "Insumo no encontrado en inventario"
+}
+
+
+---
+
+Ruta 2: Formato de Consumo (Salida)
+URL (Endpoint): http://127.0.0.1:8000/api/pintura/consumo
+Método HTTP: POST
+
+JSON (Envía el Frontend):
+
+json
+{
+  "idPinturaInventario": int (1 o 2),
+  "proveedor": "String",
+  "fechaInicio": "2026-06-24",
+  "numeroDeLote": "String",
+  "unidadDeMedida": "String",
+  "cantidadConsumida": 12.50,
+  "fechaDeFinalizacion": "2026-06-25",
+  "revisadoPor": "String",
+  "observaciones": "String"
+}
+
+
+
+JSON (Respuesta al Frontend en caso de exito ):
+
+#en caso de exito (200)
+json
+{
+  "mensaje": "Consumo ingresado con éxito",
+  "id": 
+}
+
+JSON (Respuesta al Frontend en caso de error ):
+#caso 1
+{
+  "detail": "Insumo no encontrado"
+}
+
+#caso 2
+{
+  "detail": "Stock insuficiente. Disponible: {inventario.cantidad_actual}"
+}
+
+
+
+#endpoint para inventario de pintura
+Endpoint: /api/pintura/inventario
+Método: GET
+
+Estructura de los datos que recibirá:
+json
+{
+  "data": [
+    {
+      "id": "number",
+      "color": "string",
+      "cantidadActual": "number", 
+      "cantidadMinimaAlerta": "number"
+    }
+  ]
+}
+
+
+#endpoints para datos del dashboard
+
+
+Para los Gráficos del Dashboard:
+URL: /api/dashboard/datos
+Método: GET
+
+Nota para el frontend: Al hacer el llamado, debes pasar los parámetros de fecha así: 
+/api/dashboard/datos?fromDate=YYYY-MM-DD&toDate=YYYY-MM-DD
+
+json
+{
+  "status": "string",
+  "data": [
+    {
+      "date": "string",
+      "produceLisa": "number",
+      "envasesDecorados": "number",
+      "envasesDefectuosos": "number"
+    }
+  ]
+}
+
+
+
+
+
+

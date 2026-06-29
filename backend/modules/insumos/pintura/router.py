@@ -1,7 +1,8 @@
-# backend/modules/pintura/router.py
+# backend/modules/insumos/pintura/router.py
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
 
 from backend.database.conexion import get_db
 
@@ -21,6 +22,9 @@ router = APIRouter(
 )
 
 
+# =================================================================
+# ENDPOINT: CREAR REGISTRO (ENTRADAS DE INSUMO)
+# =================================================================
 @router.post("/registro", response_model=dict)
 def crear_registro(
     datos: RegistroCrear,
@@ -36,59 +40,76 @@ def crear_registro(
         raise HTTPException(status_code=400, detail=resultado.get("message"))
 
     return {
-        "mensaje": "Registro procesado con éxito",
+        "mensaje": "Registro ingresado con éxito",
         "id": resultado.get("id")
     }
 
 
+# =================================================================
+# ENDPOINT: CREAR CONSUMO (SALIDAS DE INSUMO Y ALERTAS)
+# =================================================================
 @router.post("/consumo", response_model=dict)
 def crear_consumo(
     datos: ConsumoCrear,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
     """
     Recibe los datos de un consumo de pintura (salida),
-    valida stock, resta del inventario y guarda en formato_pintura_consumo.
+    valida stock, resta del inventario, envía alertas si aplica 
+    y guarda en formato_pintura_consumo.
     """
-    resultado = registrar_consumo_pintura(db, datos)
+    resultado = registrar_consumo_pintura(db, datos, background_tasks)
 
     if resultado.get("status") == "error":
         raise HTTPException(status_code=400, detail=resultado.get("message"))
 
     return {
-        "mensaje": "Consumo procesado con éxito",
+        "mensaje": "Consumo ingresado con éxito",
         "id": resultado.get("id")
     }
 
 
-@router.get("/registros", response_model=dict)
+# =================================================================
+# ENDPOINT: LISTAR REGISTROS (HISTORIAL DE ENTRADAS)
+# =================================================================
+@router.get("/registros")
 def listar_registros_endpoint(
     db: Session = Depends(get_db)
 ):
     """
     Devuelve todos los registros de pintura con los datos del inventario anidados.
     """
+    print("======> ¡HACIENDO GET A REGISTROS! <======")
     registros = listar_registros(db)
-    return {"data": registros}
+    return {"data": jsonable_encoder(registros)}
 
 
-@router.get("/consumos", response_model=dict)
+# =================================================================
+# ENDPOINT: LISTAR CONSUMOS (HISTORIAL DE SALIDAS)
+# =================================================================
+@router.get("/consumos")
 def listar_consumos_endpoint(
     db: Session = Depends(get_db)
 ):
     """
     Devuelve todos los consumos de pintura con los datos del inventario anidados.
     """
+    print("======> ¡HACIENDO GET A CONSUMOS! <======")
     consumos = listar_consumos(db)
-    return {"data": consumos}
+    return {"data": jsonable_encoder(consumos)}
 
 
-@router.get("/inventario", response_model=dict)
+# =================================================================
+# ENDPOINT: LISTAR INVENTARIO (STOCK ACTUAL)
+# =================================================================
+@router.get("/inventario")
 def listar_inventario_endpoint(
     db: Session = Depends(get_db)
 ):
     """
     Devuelve todos los registros de inventario de pintura.
     """
+    print("======> ¡HACIENDO GET A INVENTARIO! <======")
     inventario = obtener_inventario(db)
-    return {"data": inventario}
+    return {"data": jsonable_encoder(inventario)}

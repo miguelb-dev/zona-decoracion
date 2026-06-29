@@ -6,7 +6,7 @@ type registroDePinturaProps = {
   fechaRegistro: string;
   proveedor: string;
   idPinturaInventario: string;
-  unidadDeMedida: string;
+  unidadDeMedida: string; // <--- AGREGADO
   cantidadRegistrada: string;
   registradoPor: string;
   observaciones: string;
@@ -17,7 +17,7 @@ export const SuministrarPintura: React.FC = () => {
     fechaRegistro: "",
     proveedor: "",
     idPinturaInventario: "",
-    unidadDeMedida: "Litros",
+    unidadDeMedida: "Litros", // <--- AGREGADO (Puedes poner un valor por defecto o vacío "")
     cantidadRegistrada: "",
     registradoPor: "",
     observaciones: "",
@@ -45,7 +45,7 @@ export const SuministrarPintura: React.FC = () => {
       fechaRegistro: "",
       proveedor: "",
       idPinturaInventario: "",
-      unidadDeMedida: "Litros",
+      unidadDeMedida: "Litros", // <--- AGREGADO
       cantidadRegistrada: "",
       registradoPor: "",
       observaciones: "",
@@ -183,6 +183,8 @@ export const SuministrarPintura: React.FC = () => {
             </select>
           </div>
 
+
+          {/* NUEVO INPUT PARA UNIDAD DE MEDIDA */}
           <div className={styles.inputWrapper}>
             <label htmlFor="unidadDeMedida" className={styles.label}>
               Unidad de Medida <span className={styles.requireSymbol}>*</span>
@@ -194,8 +196,8 @@ export const SuministrarPintura: React.FC = () => {
               name="unidadDeMedida"
               value={formData.unidadDeMedida}
               onChange={handleChange}
+              placeholder="Ej: Litros, Galones..."
               required
-              readOnly
             />
           </div>
 

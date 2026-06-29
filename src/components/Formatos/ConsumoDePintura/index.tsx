@@ -5,6 +5,16 @@ export const ConsumoDePintura = () => {
   const location = useLocation();
   const isRoot = location.pathname === "/consumo-pintura";
 
+  /* Obtener el título para cada acción */
+  const getTitle = () => {
+    const path = location.pathname;
+
+    if (path.includes("consumir")) return "Consumir Pintura";
+    if (path.includes("suministrar")) return "Suministrar Pintura";
+    if (path.includes("historialconsumo")) return "Historial de Consumo";
+    if (path.includes("inventario")) return "Inventario de Pintura";
+  };
+
   return (
     <div className={styles.container}>
       {/* Título del módulo (siempre visible) */}
@@ -19,31 +29,42 @@ export const ConsumoDePintura = () => {
 
       {/* Si estamos en la raíz del módulo, mostramos las tarjetas */}
       {isRoot ? (
-        <div className={styles.landing}>
-          <div className={styles.actions}>
-            <NavLink
-              to="/consumo-pintura/consumir"
-              className={styles.actionCard}
-            >
-              <div className={styles.actionIcon}>📤</div>
-              <h3>Consumir Pintura</h3>
-              <p>Registra la salida de pintura del inventario</p>
-              <span className={styles.actionBadge}>Formulario</span>
-            </NavLink>
+        <div className={styles.actions}>
+          <NavLink to="/consumo-pintura/consumir" className={styles.actionCard}>
+            <div className={styles.actionIcon}>📤</div>
+            <h3>Consumir Pintura</h3>
+            <p>Registra la salida de pintura del inventario</p>
+          </NavLink>
 
-            <NavLink
-              to="/consumo-pintura/suministrar"
-              className={styles.actionCard}
-            >
-              <div className={styles.actionIcon}>📥</div>
-              <h3>Suministrar Pintura</h3>
-              <p>Registra la entrada de pintura al inventario</p>
-              <span className={styles.actionBadge}>Formulario</span>
-            </NavLink>
-          </div>
+          <NavLink
+            to="/consumo-pintura/suministrar"
+            className={styles.actionCard}
+          >
+            <div className={styles.actionIcon}>📥</div>
+            <h3>Suministrar Pintura</h3>
+            <p>Registra la entrada de pintura al inventario</p>
+          </NavLink>
+
+          <NavLink
+            to="/consumo-pintura/historialconsumo"
+            className={styles.actionCard}
+          >
+            <div className={styles.actionIcon}>📋</div>
+            <h3>Historial de Consumo</h3>
+            <p>Revisa el historial de consumo de pintura</p>
+          </NavLink>
+
+          <NavLink
+            to="/consumo-pintura/inventario"
+            className={styles.actionCard}
+          >
+            <div className={styles.actionIcon}>📦</div>
+            <h3>Ver Inventario</h3>
+            <p>Revisa la cantidad de pintura en el inventario</p>
+          </NavLink>
         </div>
       ) : (
-        /* Si estamos en un submódulo, mostramos navegación secundaria + contenido */
+        // * Si estamos en un submódulo, mostramos navegación secundaria + contenido
         <>
           <nav className={styles.subNav}>
             <NavLink
@@ -56,12 +77,7 @@ export const ConsumoDePintura = () => {
             >
               ← Volver
             </NavLink>
-            <span className={styles.subNavTitle}>
-              {location.pathname.includes("consumir")
-                ? "Consumir"
-                : "Suministrar"}{" "}
-              Pintura
-            </span>
+            <span className={styles.subNavTitle}>{getTitle()}</span>
           </nav>
 
           <div className={styles.content}>

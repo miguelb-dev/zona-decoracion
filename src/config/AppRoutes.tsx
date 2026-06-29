@@ -5,6 +5,8 @@ import { ConsumoDePintura } from "../components/Formatos/ConsumoDePintura";
 // Formularios
 import { ConsumirPintura } from "../components/Formatos/ConsumoDePintura/ConsumirPintura";
 import { SuministrarPintura } from "../components/Formatos/ConsumoDePintura/SuministrarPintura";
+import { InventarioPintura } from "../components/Formatos/ConsumoDePintura/InventarioPintura";
+import { HistorialConsumo } from "../components/Formatos/ConsumoDePintura/HistorialConsumo";
 
 export const AppRoutes = () => {
   return (
@@ -12,10 +14,12 @@ export const AppRoutes = () => {
       {/* Dashboard */}
       <Route path="/" element={<Dashboard />} />
 
-      {/* Módulo Consumo de Pintura - rutas anidadas pero sin Layout extra */}
+      {/* Módulo - Consumo de Pintura */}
       <Route path="/consumo-pintura" element={<ConsumoDePintura />}>
         <Route path="consumir" element={<ConsumirPintura />} />
         <Route path="suministrar" element={<SuministrarPintura />} />
+        <Route path="historialconsumo" element={<HistorialConsumo />} />
+        <Route path="inventario" element={<InventarioPintura />} />
       </Route>
     </Routes>
   );

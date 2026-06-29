@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./consumir-pintura.module.css";
 import headerLogo from "../../../../assets/images/logo-segun-controles.png";
 
+// Tipado para los campos del formulario
 type consumirPinturaProps = {
   fechaInicio: string;
   proveedor: string;
@@ -14,20 +15,31 @@ type consumirPinturaProps = {
   observaciones: string;
 };
 
-export const ConsumirPintura: React.FC = () => {
+// Tipado para el estado del mensaje de envío
+type MessageState = {
+  text: string;
+  isSuccess: boolean;
+};
+
+export const ConsumirPintura = () => {
+  /* Variables de estado para los campos del formulario */
   const [formData, setFormData] = useState<consumirPinturaProps>({
     fechaInicio: "",
     proveedor: "",
     idPinturaInventario: "",
     numeroDeLote: "",
     cantidadConsumida: "",
-    unidadDeMedida: "Litros" /* Por ahora, siempre se trabajará con Litros */,
+    unidadDeMedida: "Litros",
     fechaDeFinalizacion: "",
     revisadoPor: "",
     observaciones: "",
   });
 
   const [enviado, setEnviado] = useState(false);
+  const [message, setMessage] = useState<MessageState>({
+    text: "",
+    isSuccess: false,
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Almacenar los datos de los campos
@@ -58,11 +70,16 @@ export const ConsumirPintura: React.FC = () => {
     });
   };
 
+  // Cerrar la notificación de envío
+  const closeModal = () => {
+    setEnviado(false);
+  };
+
   // Enviar el Formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isSubmitting) return; //* Previene que el usuario haga doble click
+    if (isSubmitting) return;
     setIsSubmitting(true);
 
     try {
@@ -77,34 +94,27 @@ export const ConsumirPintura: React.FC = () => {
         },
       );
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.mensaje ||
-            `Error ${response.status}: ${response.statusText}`,
-        );
-      }
-
       const data = await response.json();
 
-      console.log("Respuesta del servidor:", data);
+      if (!response.ok) {
+        const errorMsg =
+          data.detail || data.mensaje || `Error ${response.status}`;
+        setMessage({
+          text: errorMsg,
+          isSuccess: false,
+        });
+        setEnviado(true);
+        throw new Error(errorMsg);
+      }
 
-      // Mostrar mensaje de éxito
+      setMessage({
+        text: data.mensaje || "Consumo realizado con éxito",
+        isSuccess: true,
+      });
+
       setEnviado(true);
-      setInterval(() => {
-        setEnviado(false);
-      }, 3000);
-
-      // Resetear formulario después del envío exitoso
-      setTimeout(() => {
-        handleReset();
-      }, 3000);
-
-      /*  */
     } catch (err) {
       console.error("Error en el envío:", err);
-
-      /*  */
     } finally {
       setIsSubmitting(false);
     }
@@ -112,13 +122,66 @@ export const ConsumirPintura: React.FC = () => {
 
   return (
     <>
-      {/* Notificación de Envío */}
+      {/* Notificación de Envío - Modal */}
       {enviado && (
-        <div className={styles.successMessage}>
-          ¡Control registrado con éxito!
+        <div className={styles.modal} onClick={closeModal}>
+          <div
+            className={`${styles.modalContent} ${
+              message.isSuccess ? styles.successful : styles.failed
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botón de cerrar */}
+            <button
+              onClick={closeModal}
+              className={styles.closeButton}
+              aria-label="Cerrar modal"
+            >
+              ×
+            </button>
+
+            {/* Ícono según éxito/error */}
+            {message.isSuccess ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.1"
+                stroke="currentColor"
+                width="120"
+                height="120"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.1"
+                stroke="currentColor"
+                width="110"
+                height="110"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            )}
+
+            {/* Mensaje */}
+            <p className={styles.modalMessage}>{message.text}</p>
+          </div>
         </div>
       )}
 
+      {/* Formulario */}
       <form className={styles.form} onSubmit={handleSubmit}>
         <header className={styles.headerForm}>
           <div className={styles.logoWrapper}>
@@ -282,8 +345,12 @@ export const ConsumirPintura: React.FC = () => {
         </section>
 
         <div className={styles.buttonWrapper}>
-          <button type="submit" className={styles.saveButton}>
-            Guardar
+          <button
+            type="submit"
+            className={styles.saveButton}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Enviando..." : "Guardar"}
           </button>
           <button
             type="button"
